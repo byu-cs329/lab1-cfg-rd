@@ -4,7 +4,7 @@ The projects have students implement constant propagation. To do that, constant 
 
 The first objective of this lab is to implement a `ControlFlowGraph` class that builds the control flow graph for a method given a `MethodDeclaration` node in a `CompilationUnit`. The graph should be constructed with an `ASTVisitor` using the algorithm defined in the [lecture notes](https://bitbucket.org/byucs329/byu-cs-329-lecture-notes/src/master/cfg-rd-lecture.md). 
 
-The second objective of this lab is to implement the reaching definitions data-flow analysis as defined in the [lecture notes](https://bitbucket.org/byucs329/byu-cs-329-lecture-notes/src/master/cfg-rd-lecture.md) on the `ControlFlowGraph`.
+The second objective of this lab is to implement the reaching definitions data-flow analysis as defined in the [lecture notes](https://bitbucket.org/byucs329/byu-cs-329-lecture-notes/src/master/cfg-rd-lecture.md) on the `ControlFlowGraph`. In other words, given a control flow graph for a method, compute the reaching definitions for that graph.
 
 The third objective is to create a test framework to test the correctness of the control flow graph and the reaching definition analysis. Both implementations should be functionally tested with Black-box test techniques in isolation. What that means is that mocking is used to test reaching definitions separate from building the control flow graph so the tests for the reaching definitions do not rely on the code to build the control flow graph. 
 
@@ -17,6 +17,23 @@ See [cfg-rd-lecture.md](https://bitbucket.org/byucs329/byu-cs-329-lecture-notes/
 # Java Subset
 
 Use the same subset of Java as defined in **Lab0 Constant Folding**. See [README.md](https://github.com/byu-cs329/lab0-constant-folding) in the master template repository or the most updated set of language restrictions.
+
+# Interfaces
+
+The `ControlFlowGraph` and `ReachingDefinitions` are interfaces for how to interact with the objects. For example, reaching definitions takes a control flow graph and computes the reaching definitions for each statement in that graph. Later, when constant propagation is implemented, for any given statement in the control flow graph, it will check to see how many definitions reach that statement for a given variable, and if there is just one definition, and that definition assigns it to a literal, then the variable is replaced with the literal.
+
+```java
+x = 5; // statement s0
+y = x + 4; // statement s1
+```
+
+In the above example, assuming that ```reachDefs``` is an instance of something that implements the ```ReachingDefinitions``` interface, then the reaching definitions for statement 1 ```reachDefs.getReachingDefinitions(s0)``` should return the set ```{(x, s0)}```. Notice that the set contains the name of the variable and the statement in the control flow graph that defines that variable. This pair of name and statement exactly match the pairs that are in the entry-sets and exit-sets for the analysis. Is this way, ```reachDefs.getReachingDefinitions(s0)``` returns the entry set for statement ```s0``` from the reaching definitions analysis. Any implementation of the interface will need to compute from the control flow graph for a method declaration the entry-sets in order to implement the interface. There should be an instance of the ```ReachingDefinitions``` implementation for each ```MethodDeclaration``` in the input program.
+
+In summary, the ```ControlFlowGraph``` interface is what is used to compute ```ReachingDefinitions```. The implementation of the interface should take a ```MethodDeclaration``` and for that method declaration compute what should be returned for the calls on the interface. Similarly, the ```ReachindDefinitions``` interface implementation should take something of type ```ControlFlowGraph``` that is the control flow graph for a particular ```MethodDeclartion``` and from that method compute the entry-sets for each statement in the graph and return those for calls on the interface.
+
+## A Note on Parameters
+
+The parameters in the ```MethodDeclaration``` are not of type ```Statement```  (usually they are of type  ```SingleVariableDeclartion```) so it is not possible to create the (```Name```,```Statament```) pair directly for the parameters in the reaching definitions analysis---these are the pairs in the notes with the dot. Using the ```null``` value for the statement is one solution but also a solution that will require null-checks in the code. Another solution is to create a ```VariableDeclarationFragment``` for each parameter using the name in the ```SingleVariableDeclaration``` (e.g., ```vdf = node.getAST().newVariableDeclarationFragment(); node.setName(name);```), and then create a ```VariableDeclarationStatement``` from that fragment. This solution has some front-end work but no special null checks. 
 
 # Lab Requirements
 
