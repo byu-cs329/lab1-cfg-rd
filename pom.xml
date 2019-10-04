@@ -6,10 +6,10 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>edu.byu.cs329</groupId>
-	<artifactId>CFG-RD-Lab</artifactId>
+	<artifactId>lab1-cfg-rd</artifactId>
 	<version>1.0-SNAPSHOT</version>
 
-	<name>CFG-RD-Lab</name>
+	<name>lab1-cfg-rd</name>
 	<!-- FIXME change it to the project's website -->
 	<url>http://www.example.com</url>
 
