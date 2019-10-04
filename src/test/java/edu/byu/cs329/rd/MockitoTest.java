@@ -23,10 +23,5 @@ public class MockitoTest {
   @Test
   void mockTest() {
     Assertions.assertNull(rd.getReachingDefinitions(null));
-    boolean b = true;
-    if (b) {
-      b = false;
-      ;
-    };
   }
 }
