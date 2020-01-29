@@ -33,7 +33,7 @@ In summary, the ```ControlFlowGraph``` interface is what is used to compute ```R
 
 ## A Note on Parameters
 
-The parameters in the ```MethodDeclaration``` are not of type ```Statement```  (usually they are of type  ```SingleVariableDeclartion```) so it is not possible to create the (```Name```,```Statament```) pair directly for the parameters in the reaching definitions analysis---these are the pairs in the notes with the dot. Using the ```null``` value for the statement is one solution but also a solution that will require null-checks in the code. Another solution is to create a ```VariableDeclarationFragment``` for each parameter using the name in the ```SingleVariableDeclaration``` (e.g., ```vdf = node.getAST().newVariableDeclarationFragment(); node.setName(name);```), and then create a ```VariableDeclarationStatement``` from that fragment. This solution has some front-end work but no special null checks. 
+The parameters in the ```MethodDeclaration``` are not of type ```Statement```  (usually they are of type  ```SingleVariableDeclartion```) so it is not possible to create the (```Name```,```Statament```) pair directly from the parameters in the reaching definitions analysis---these are the pairs in the notes with the dot. Using the ```null``` value for the statement is one solution but also a solution that will require null-checks in the code. Another solution is to create a ```VariableDeclarationFragment``` for each parameter using the name in the ```SingleVariableDeclaration``` (e.g., ```vdf = node.getAST().newVariableDeclarationFragment(); vdf.setName(name);```), and then create a ```VariableDeclarationStatement``` from that fragment. This solution has some front-end work but no special null checks.
 
 # Lab Requirements
 
