@@ -51,9 +51,9 @@ Create a pull request when the lab is done. Submit to Canvas the URL of the repo
 | Item | Point Value |
 | ------- | ----------- |
 | Test framework for ```ControlFlowGraph``` with reasonable oracles | 20 |
-| Tests that divide the input space in a reasoned, systematic, and somewhat complete way for ```ControlFlowGraph``| 30 |
+| Tests that divide the input space in a reasoned, systematic, and somewhat complete way for ```ControlFlowGraph```| 30 |
 | Test framework for ```ReachingDefinitions``` with reasonable oracles | 20 |
-| Minimal number of tests using mocks for the ```ControlFlowGraph``` that cover a few interesting parts of the input space for ```ReachingDefinitions``| 30 |
+| Minimal number of tests using mocks for the ```ControlFlowGraph``` that cover a few interesting parts of the input space for ```ReachingDefinitions```| 30 |
 | Checks in tests using the ```Mockito.verify``` API either with mock objects or spy objects during unit testing or integration testing | 20 |
 | Consistent, readable, and descriptive naming of all tests | 10 |
 | Appropriate use of `@Nested`, `@Tag`, and `@DisplayName` to organize and communicate the test methodology | 10 | | 
