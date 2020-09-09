@@ -1,14 +1,14 @@
 package edu.byu.cs329.rd;
 
+import java.util.HashSet;
+
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.jupiter.MockitoExtension;
+
+import edu.byu.cs329.rd.ReachingDefinitions.Definition;
 
 public class MockitoTest {
   
@@ -17,11 +17,11 @@ public class MockitoTest {
   
   @BeforeEach
   void init() {
-    MockitoAnnotations.initMocks(this);
+    MockitoAnnotations.openMocks(this);
   }
   
   @Test
   void mockTest() {
-    Assertions.assertNull(rd.getReachingDefinitions(null));
+    Assertions.assertEquals(new HashSet<Definition>(), rd.getReachingDefinitions(null));
   }
 }
