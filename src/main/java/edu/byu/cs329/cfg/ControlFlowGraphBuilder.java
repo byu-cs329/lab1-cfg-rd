@@ -48,17 +48,16 @@ public class ControlFlowGraphBuilder {
       methodDeclaration = node;
       end = node.getBody();
       List<Statement> statementList = getStatementList(node.getBody().statements());
-      int listSize = statementList.size();
-
-      if (listSize == 0) {
+    
+      if (statementList.isEmpty()) {
         start = end;
         return false;
       }
       
-      start = statementList.get(0);
+      start = first(statementList);
       Set<Statement> set = new HashSet<Statement>();
       set.add(end);
-      edges.put(statementList.get(listSize - 1), set);
+      edges.put(last(statementList), set);
 
       return true;
     }
@@ -83,7 +82,7 @@ public class ControlFlowGraphBuilder {
           return true;
         }
         Statement nextStatement = statementList.get(i + 1);
-        addEdge(edges, statement, nextStatement);
+        addEdge(statement, nextStatement);
       }
       return true;
     }
@@ -93,14 +92,21 @@ public class ControlFlowGraphBuilder {
      * 
      * @requires node != null
      * 
-     * @ensures defined(first(S)) ==> edges = old(edges) \cup {(node, first(S))}
-     * @ensures !defined(first(S)) ==> edges = old(edges) \cup {(node, node)}
+     * @ensures defined(first(S)) /\ !isReturn(last(S)) ==> 
+     *     edges = old(edges) \cup {(node, first(S)), (last(S), node)}
+     * @ensures defined(first(S)) /\ isReturn(last(S)) ==>
+     *     edges = old(edges) \cup {(node, first(S))}
+     * @ensures !defined(first(S)) ==> 
+     *     edges = old(edges) \cup {(node, node)}
      * 
      * @param node the while-statement.
      */
     @Override
     public boolean visit(WhileStatement node) {
-      return super.visit(node);
+      Block block = (Block)(node.getBody());
+      List<Statement> statementList = getStatementList(block.statements());
+      insertStatementList(node, statementList, node);
+      return true;
     }
 
     /**
@@ -123,7 +129,33 @@ public class ControlFlowGraphBuilder {
      */
     @Override
     public boolean visit(IfStatement node) {
-      return super.visit(node);
+      Set<Statement> set = getStatements(edges, node);
+      Statement nextStatement = set.iterator().next();
+      edges.remove(node); 
+
+      Block block = (Block)(node.getThenStatement());
+      List<Statement> statementList = getStatementList(block.statements());
+      insertStatementList(node, statementList, nextStatement);
+
+      block = (Block)(node.getElseStatement());
+      statementList = getStatementList(block.statements());
+      insertStatementList(node, statementList, nextStatement);
+
+      return true;
+    }
+
+    /**
+     * Visit return statement.
+     * 
+     * @requires node != null
+     * 
+     * @ensures edges = old(edges) \cup {(node, end)}
+     * 
+     * @param node the return statement.
+     */
+    public boolean visit(ReturnStatement node) {
+      addEdge(node, end);
+      return false;
     }
 
     /**
@@ -215,13 +247,35 @@ public class ControlFlowGraphBuilder {
       return statementList;
     }
 
-    private void addEdge(Map<Statement, Set<Statement>> map, Statement statement, 
-        Statement nextStatement) {
-      getStatements(map, statement).add(nextStatement);
+    private void addEdge(Statement statement, Statement nextStatement) {
+      getStatements(edges, statement).add(nextStatement);
     }
 
     private boolean isReturn(Statement statement) {
       return statement instanceof ReturnStatement;
+    }
+
+    private Statement first(List<Statement> statementList) {
+      return statementList.get(0);
+    }
+
+    private Statement last(List<Statement> statementList) {
+      int size = statementList.size();
+      return statementList.get(size - 1);
+    }
+
+    private void insertStatementList(Statement source, List<Statement> statementList, 
+        Statement destination) {
+      if (statementList.isEmpty()) {
+        addEdge(source, destination);
+      } 
+      
+      addEdge(source, first(statementList));
+
+      Statement last = last(statementList);
+      if (!isReturn(last)) {
+        addEdge(last, destination); 
+      }
     }
   }
 
