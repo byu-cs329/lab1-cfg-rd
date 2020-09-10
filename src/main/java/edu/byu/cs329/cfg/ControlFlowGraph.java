@@ -1,7 +1,6 @@
 package edu.byu.cs329.cfg;
 
 import java.util.Set;
-
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.Statement;
 

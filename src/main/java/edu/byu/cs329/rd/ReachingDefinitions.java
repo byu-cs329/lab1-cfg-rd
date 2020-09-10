@@ -1,7 +1,6 @@
 package edu.byu.cs329.rd;
 
 import java.util.Set;
-
 import org.eclipse.jdt.core.dom.Name;
 import org.eclipse.jdt.core.dom.Statement;
 
