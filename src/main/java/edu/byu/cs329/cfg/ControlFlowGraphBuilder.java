@@ -44,7 +44,7 @@ public class ControlFlowGraphBuilder {
      */
     @Override
     public boolean visit(MethodDeclaration node) {
-      clearAll();
+      initAll();
       methodDeclaration = node;
       end = node.getBody();
       List<Statement> statementList = getStatementList(node.getBody().statements());
@@ -213,13 +213,13 @@ public class ControlFlowGraphBuilder {
       };
     }
 
-    private void clearAll() {
-      edges.clear();
+    private void initAll() {
+      edges = new HashMap<Statement, Set<Statement>>();
       start = null;
       end = null;
       methodDeclaration = null;
-      successors.clear();
-      predecessors.clear();
+      successors = new HashMap<Statement, Set<Statement>>();
+      predecessors = new HashMap<Statement, Set<Statement>>();
     }
 
     private void computeSucessorsAndPredecessors(Set<Statement> set, Statement s) {
