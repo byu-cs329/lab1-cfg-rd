@@ -9,13 +9,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.Statement;
-import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
 import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
+
 
 public class ReachingDefinitionsBuilder {
   private List<ReachingDefinitions> rdList = null;
@@ -40,6 +39,8 @@ public class ReachingDefinitionsBuilder {
     Set<Definition> parameterDefinitions = createParameterDefinitions(cfg.getMethodDeclaration());
     entrySetMap = new HashMap<Statement, Set<Definition>>();
     
+    Statement start = cfg.getStart();
+    entrySetMap.put(start, parameterDefinitions);
     // TODO: implement reaching definitions
     
     return new ReachingDefinitions() {
@@ -60,15 +61,10 @@ public class ReachingDefinitionsBuilder {
   private Set<Definition> createParameterDefinitions(MethodDeclaration methodDeclaration) {
     List<SingleVariableDeclaration> parameterList = 
         getParameterList(methodDeclaration.parameters());
-    AST ast = methodDeclaration.getAST();
     Set<Definition> set = new HashSet<Definition>();
 
     for (SingleVariableDeclaration parameter : parameterList) {
-      VariableDeclarationFragment fragment = ast.newVariableDeclarationFragment();
-      SimpleName name = ast.newSimpleName(parameter.getName().toString());
-      fragment.setName(name);
-      VariableDeclarationStatement statement = ast.newVariableDeclarationStatement(fragment);
-      Definition definition = createDefinition(name, statement);
+      Definition definition = createDefinition(parameter.getName(), null);
       set.add(definition);  
     }
 

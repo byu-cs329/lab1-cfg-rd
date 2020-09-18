@@ -37,10 +37,10 @@ The parameters in the ```MethodDeclaration``` are not of type ```Statement```  (
 
 # Lab Requirements
 
-  1. An implementation and black-box functional test framework for the `ControlFlowGraph` 
-  2. An implementation and minimal black-box functional test framework using mocks to implement the `ControlFlowGraph` interface for the reaching definitions data-flow analysis---separate the test for reaching definitions from the control flow graph construction
-  3. The use of the ```Mockito.verify``` API to verify interactions with the ```ControlFlowGraph``` mock
-  4. A black-box functional test framework for the integrated system that builds the control flow graph and then does the reaching definitions analysis
+  1. Write the missing tests in  `ControlFlowGraphBuilderTests` for `ReturnStatement`, `WhileStatement`, and `IfStatement` and fix any discovered defects. Use the specifications in `ControlFlowBuilder` for guidance. There should be around 7 additional tests.
+  2. Write a minimal set of tests for `ReachingDefinitions` from a `ControlFlowGraph`. The tests should use mocks for the `ControlFlowGraph` test inputs and check the structure of the `ReachingDefinitions` instance in some way. There is no formal specification for guiding test generation. Reason over shapes of control-flow graph structures and **only test interesting shapes**. There should be less than a handful of tests to cover **interesting shapes**.
+  3. Implement the code to build the `ReachingDefinitions` from a `ControlFlowGraph`.
+  4. Write an interesting system level test(s) that use the `ControlFlowBuilder` to generate a `ControlFlowGraph` instance for input to the code that builds `ReachingDefinitions`.
 
 ## What to turn in?
 
