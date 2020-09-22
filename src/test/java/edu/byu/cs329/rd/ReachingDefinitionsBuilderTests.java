@@ -11,6 +11,7 @@ import java.util.Set;
 import org.eclipse.jdt.core.dom.Statement;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import edu.byu.cs329.cfg.ControlFlowGraph;
@@ -27,6 +28,7 @@ public class ReachingDefinitionsBuilderTests {
   }
 
   @Test
+  @Tag("Parameters")
   @DisplayName("Should have a definition for each parameter at start when the method declaration has parameters.")
   void should_HaveDefinitionForEachParameterAtStart_when_MethodDeclarationHasParameters() {
     ControlFlowGraph controlFlowGraph = MockUtils.newMockForEmptyMethodWithTwoParameters("a", "b");

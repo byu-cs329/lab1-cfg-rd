@@ -14,6 +14,7 @@ import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.Statement;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 @DisplayName("Tests for ControlFlowBuilder")
@@ -36,6 +37,7 @@ public class ControlFlowBuilderTests {
   }
 
   @Test
+  @Tag("MethodDeclaration")
   @DisplayName("Should set start and end same when empty method declaration")
   void should_SetStartAndEndSame_when_EmptyMethodDeclaration() {
     String fileName = "cfgInputs/should_SetStartAndEndSame_when_EmptyMethodDeclaration.java";
@@ -47,6 +49,7 @@ public class ControlFlowBuilderTests {
   }
 
   @Test
+  @Tag("MethodDeclaration")
   @DisplayName("Should set start to first statement and end different when non-empty method declaration")
   void should_SetStartToFirstStatementAndEndDifferent_when_NonEmptyMethodDeclaration() {
     String fileName = "cfgInputs/should_SetStartToFirstStatementAndEndDifferent_when_NonEmptyMethodDeclaration.java";
@@ -63,6 +66,7 @@ public class ControlFlowBuilderTests {
   }
 
   @Test
+  @Tag("Block")
   @DisplayName("Should link all when block has no return")
   void should_LinkAll_when_BlockHasNoReturn() {
     String fileName = "cfgInputs/should_LinkAll_when_BlockHasNoReturn.java";
@@ -73,6 +77,7 @@ public class ControlFlowBuilderTests {
   }
 
   @Test
+  @Tag("Block")
   @DisplayName("Should link to return when block has return") 
   void should_LinkToReturn_when_BlockHasReturn() {
     String fileName = "cfgInputs/should_LinkToReturn_when_BlockHasReturn.java";
