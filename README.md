@@ -29,18 +29,22 @@ In the above example, assuming that ```reachDefs``` is an instance of something 
 
 # Lab Requirements
 
-  1. Write the missing tests in  `ControlFlowGraphBuilderTests` for `ReturnStatement`, `WhileStatement`, and `IfStatement` and fix any discovered defects. Use the specifications in `ControlFlowGraphBuilder` for guidance. There should be around 7 additional tests. Follow the test approach in the existing given tests for `MethodDeclaration` and `Block`.
+  1. Write the missing tests in  `ControlFlowGraphBuilderTests` for `ReturnStatement`, `WhileStatement`, and `IfStatement` and fix any discovered defects. Use the specifications in `ControlFlowGraphBuilder` for guidance. There should only be around 10-15 additional tests. Follow the test approach in the existing given tests for `MethodDeclaration` and `Block`.
   2. Write a minimal set of tests for `ReachingDefinitionsBuilder` given a list with a single `ControlFlowGraph`. The tests should use mocks for the `ControlFlowGraph` inputs and check the structure of the `ReachingDefinitions` instance in some way. There is no formal specification for guiding black-box test generation. Reason over shapes of control-flow graph structures and **only test interesting shapes**. There should be less than a handful of tests to cover **interesting shapes**.
   3. Implement the code to build the `ReachingDefinitions` interface from a `ControlFlowGraph` instance.
   4. Write an interesting system level test(s) that use(s) the `ControlFlowBuilder` to generate a `ControlFlowGraph` instance for input to the code that builds a `ReachingDefinitions` instance.
 
 ## What to turn in?
 
-Create a pull request when the lab is done. Submit to Canvas the URL of the repository.
+Create a pull request when the lab is done. Submit to Canvas the URL of the pull request.
 
 # Test Framework for Control Flow Graphs
 
 The tests for the `ControlFlowGraphBuilder` use the `StatementTracker` to create a list of each type of statement in a compilation unit. The statements in each type of list are ordered by visit order. The `StatementTracker` is a convenient and easy way to get the `ASTNode` instance for any statement for checking specific edges between statements in the particular method from which the `ControlFlowGraph` is constructed. An example of using the `StatementTracker` to get statements checking specific edges is shown in the tests for `Block`. Intuitively though, the `StatementTracker` makes it easy to get any particular statement in the method to check for the presence or absence of an edge.
+
+# Test Inputs in the resources directory
+
+Anytime a test input is changed, then a `mvn compile` is required to update the `target` directory with with the changed resource. Be aware of this requirement if ever the test input file is being modified, the running the test is not using the modified input.
 
 # Rubric
 

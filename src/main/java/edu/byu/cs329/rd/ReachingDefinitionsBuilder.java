@@ -11,9 +11,9 @@ import java.util.Map;
 import java.util.Set;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.SimpleName;
-import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.Statement;
-import org.eclipse.jdt.core.dom.VariableDeclarationStatement;
+import org.eclipse.jdt.core.dom.VariableDeclaration;
+
 
 
 public class ReachingDefinitionsBuilder {
@@ -59,11 +59,11 @@ public class ReachingDefinitionsBuilder {
   }
 
   private Set<Definition> createParameterDefinitions(MethodDeclaration methodDeclaration) {
-    List<SingleVariableDeclaration> parameterList = 
+    List<VariableDeclaration> parameterList = 
         getParameterList(methodDeclaration.parameters());
     Set<Definition> set = new HashSet<Definition>();
 
-    for (SingleVariableDeclaration parameter : parameterList) {
+    for (VariableDeclaration parameter : parameterList) {
       Definition definition = createDefinition(parameter.getName(), null);
       set.add(definition);  
     }
@@ -71,16 +71,16 @@ public class ReachingDefinitionsBuilder {
     return set;
   }
 
-  private Definition createDefinition(SimpleName name, VariableDeclarationStatement statement) {
+  private Definition createDefinition(SimpleName name, Statement statement) {
     Definition definition = new Definition();
     definition.name = name;
     definition.statement = statement;
     return definition;
   }
 
-  private List<SingleVariableDeclaration> getParameterList(Object list) {
+  private List<VariableDeclaration> getParameterList(Object list) {
     @SuppressWarnings("unchecked")
-    List<SingleVariableDeclaration> statementList = (List<SingleVariableDeclaration>)(list);
+    List<VariableDeclaration> statementList = (List<VariableDeclaration>)(list);
     return statementList;
   }
 }

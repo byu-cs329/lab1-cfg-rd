@@ -8,8 +8,8 @@ import java.util.List;
 
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.SimpleName;
-import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
 import org.eclipse.jdt.core.dom.Statement;
+import org.eclipse.jdt.core.dom.VariableDeclaration;
 
 import edu.byu.cs329.cfg.ControlFlowGraph;
 
@@ -19,9 +19,9 @@ public class MockUtils {
     Statement statement = mock(Statement.class);
     when(cfg.getStart()).thenReturn(statement);
     MethodDeclaration methodDeclarion = mock(MethodDeclaration.class);
-    SingleVariableDeclaration firstParameter = newSingleVariableDeclarationMock(first);
-    SingleVariableDeclaration secondParameter = newSingleVariableDeclarationMock(second);
-    List<SingleVariableDeclaration> parameterList = new ArrayList<SingleVariableDeclaration>();
+    VariableDeclaration firstParameter = newMockForVariableDeclaration(first);
+    VariableDeclaration secondParameter = newMockForVariableDeclaration(second);
+    List<VariableDeclaration> parameterList = new ArrayList<VariableDeclaration>();
     parameterList.add(firstParameter);
     parameterList.add(secondParameter);
     when(methodDeclarion.parameters()).thenReturn(parameterList);
@@ -29,8 +29,8 @@ public class MockUtils {
     return cfg;
   }
 
-  public static SingleVariableDeclaration newSingleVariableDeclarationMock(String name) {
-    SingleVariableDeclaration declaration = mock(SingleVariableDeclaration.class);
+  public static VariableDeclaration newMockForVariableDeclaration(String name) {
+    VariableDeclaration declaration = mock(VariableDeclaration.class);
     SimpleName simpleName = mock(SimpleName.class);
     when(simpleName.getIdentifier()).thenReturn(name);
     when(declaration.getName()).thenReturn(simpleName);

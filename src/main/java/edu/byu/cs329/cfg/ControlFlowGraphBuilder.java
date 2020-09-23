@@ -15,9 +15,12 @@ import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.ReturnStatement;
 import org.eclipse.jdt.core.dom.Statement;
 import org.eclipse.jdt.core.dom.WhileStatement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ControlFlowGraphBuilder {
-
+  Logger log = LoggerFactory.getLogger(ControlFlowGraphBuilder.class);
+  
   class Visitor extends ASTVisitor {
     Map<Statement, Set<Statement>> edges = new HashMap<Statement, Set<Statement>>();
     Statement start = null;
@@ -37,7 +40,7 @@ public class ControlFlowGraphBuilder {
      * @ensures edges = \emptyset
      * @ensures methodDeclaration = node
      * @ensures defined(first(S)) ==> start = first(S) /\ edges = {(last(S), end)}
-     * @ensures !defined(first(S) ==> start = end /\ edges = \emptyset
+     * @ensures !defined(first(S)) ==> start = end /\ edges = \emptyset
      * @ensures end = Block(S)
      * 
      * @param node the method declaration.
@@ -55,10 +58,9 @@ public class ControlFlowGraphBuilder {
       }
       
       start = first(statementList);
-      Set<Statement> set = new HashSet<Statement>();
-      set.add(end);
-      edges.put(last(statementList), set);
-
+      Statement last = last(statementList);
+      addEdge(last, end);
+  
       return true;
     }
 
@@ -91,6 +93,7 @@ public class ControlFlowGraphBuilder {
      * Visit while-statement.
      * 
      * @requires node != null
+     * @requires node.getBody() instanceof Block
      * 
      * @ensures defined(first(S)) /\ !isReturn(last(S)) ==> 
      *     edges = old(edges) \cup {(node, first(S)), (last(S), node)}
@@ -112,8 +115,10 @@ public class ControlFlowGraphBuilder {
     /**
      * Visit if-statement.
      * 
+     * <p>next(node) := statement following
+     * 
      * <p>then(node) := if defined(first(S_Then)) /\ !isReturn(last(S_Then)) then
-     *                    {(node, S_Then), (last(S_Then), next(S_then))} 
+     *                    {(node, S_Then), (last(S_Then), next(node))} 
      *                  else if defined(first(S_Then)) /\ isReturn(last(S_Then)) then 
      *                    {(node, S_Then)} 
      *                  else if !defined(first(S_Then)) then 
@@ -122,6 +127,8 @@ public class ControlFlowGraphBuilder {
      * <p>else(node) is defined similarly to then(node).
      * 
      * @requires node != null
+     * @requires node.getThenStatement() instanceof Block
+     * @requires node.getElseStatement() != null ==> node.getElseStatement() instanceof Block
      * 
      * @ensures edges = old(edges) \cup then(node) \cup else(node)
      * 
@@ -137,9 +144,13 @@ public class ControlFlowGraphBuilder {
       List<Statement> statementList = getStatementList(block.statements());
       insertStatementList(node, statementList, nextStatement);
 
-      block = (Block)(node.getElseStatement());
-      statementList = getStatementList(block.statements());
-      insertStatementList(node, statementList, nextStatement);
+      Statement elseStatement = node.getElseStatement();
+      if (elseStatement != null) {
+        log.debug("Else-statement is null");
+        block = (Block)(elseStatement);
+        statementList = getStatementList(block.statements());
+        insertStatementList(node, statementList, nextStatement);
+      }
 
       return true;
     }
@@ -248,6 +259,7 @@ public class ControlFlowGraphBuilder {
     }
 
     private void addEdge(Statement statement, Statement nextStatement) {
+      log.debug("Adding to edges\nSource:\t" + statement + "\nDestination\t" + nextStatement);
       getStatements(edges, statement).add(nextStatement);
     }
 
@@ -268,6 +280,7 @@ public class ControlFlowGraphBuilder {
         Statement destination) {
       if (statementList.isEmpty()) {
         addEdge(source, destination);
+        return;
       } 
       
       addEdge(source, first(statementList));
