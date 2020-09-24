@@ -14,7 +14,7 @@ See [cfg-rd-lecture.md](https://bitbucket.org/byucs329/byu-cs-329-lecture-notes/
 
 # Java Subset
 
-Use the same subset of Java as defined in **Lab0 Constant Folding**. See [README.md](https://github.com/byu-cs329/lab0-constant-folding) in the master template repository or the most updated set of language restrictions and the further restrictions below.
+Use the same subset of Java as defined in **Lab0 Constant Folding**. See [README.md](https://github.com/byu-cs329/lab0-constant-folding) in the master template repository or the most updated set of language restrictions. There may be additional restrictions in the requirements.
 
 # Interfaces
 
@@ -30,7 +30,7 @@ In the above example, assuming that ```reachDefs``` is an instance of something 
 # Lab Requirements
 
   1. Write the missing tests in  `ControlFlowGraphBuilderTests` for `ReturnStatement`, `WhileStatement`, and `IfStatement` and fix any discovered defects. Use the specifications in `ControlFlowGraphBuilder` for guidance. There should only be around 10-15 additional tests. Follow the test approach in the existing given tests for `MethodDeclaration` and `Block`.
-  2. Write a minimal set of tests for `ReachingDefinitionsBuilder` given a list with a single `ControlFlowGraph`. The tests should use mocks for the `ControlFlowGraph` inputs and check the structure of the `ReachingDefinitions` instance in some way. There is no formal specification for guiding black-box test generation. Reason over shapes of control-flow graph structures and **only test interesting shapes**. There should be less than a handful of tests to cover **interesting shapes**.
+  2. Write a minimal set of tests for `ReachingDefinitionsBuilder` given a list with a single `ControlFlowGraph`. The tests should use mocks for the `ControlFlowGraph` inputs and check the structure of the `ReachingDefinitions` instance in some way. There is no formal specification for guiding black-box test generation. Reason over shapes of control-flow graph structures and **only test interesting shapes**. There should be less than a handful (e.g. 3 to 6) of tests to cover **interesting shapes**.
   3. Implement the code to build the `ReachingDefinitions` interface from a `ControlFlowGraph` instance.
   4. Write an interesting system level test(s) that use(s) the `ControlFlowBuilder` to generate a `ControlFlowGraph` instance for input to the code that builds a `ReachingDefinitions` instance.
 
@@ -45,6 +45,16 @@ The tests for the `ControlFlowGraphBuilder` use the `StatementTracker` to create
 # Test Inputs in the resources directory
 
 Anytime a test input is changed, then a `mvn compile` is required to update the `target` directory with with the changed resource. Be aware of this requirement if ever the test input file is being modified, the running the test is not using the modified input.
+
+# Thoughts
+
+  * Creating the mocks for the control flow graph is error prone. It is not unusual to find that the reaching definitions implementation is fine and rather the test failded because the mock was not correct.
+  * `doesDefine` in `ReachingDefinitionsBuilderTests` is easily modified to check not just for a name but for the mock that is the expected statement for the definition.
+  * Be sure when computing the union over predecessors that there is special care taken for the start node so that it includes the definitions for the parameters.
+  * Compute once and save the defintions in a `GenSet` map so that the same instances of `Definition` are used through all the analysis. Using the **same** instances everywhere means that two sets can be compared for equality without having to define any `equals` method for `Definition` types. (e.g. `set1.equals(set2)` works as expected).
+  * `SimpleName.getIdentifier()` gives the name and is what needs to be mocked.
+  * Write code to create mocks for things such as `VariableDeclaration`, `VariableDeclarationStatement`, `Assignment`, `ExpressionStatement`, etc.
+  * The code for the reaching definitions analysis should be simple and may prove to be less code than the test code to build the mocks and define the tests.
 
 # Rubric
 
