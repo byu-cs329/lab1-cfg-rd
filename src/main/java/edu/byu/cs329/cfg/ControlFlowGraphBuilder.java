@@ -37,7 +37,6 @@ public class ControlFlowGraphBuilder {
      * 
      * @requires node != null
      * 
-     * @ensures edges = \emptyset
      * @ensures methodDeclaration = node
      * @ensures defined(first(S)) ==> start = first(S) /\ edges = {(last(S), end)}
      * @ensures !defined(first(S)) ==> start = end /\ edges = \emptyset
@@ -118,9 +117,9 @@ public class ControlFlowGraphBuilder {
      * <p>next(node) := statement following
      * 
      * <p>then(node) := if defined(first(S_Then)) /\ !isReturn(last(S_Then)) then
-     *                    {(node, S_Then), (last(S_Then), next(node))} 
+     *                    {(node, first(S_Then)), (last(S_Then), next(node))} 
      *                  else if defined(first(S_Then)) /\ isReturn(last(S_Then)) then 
-     *                    {(node, S_Then)} 
+     *                    {(node, first(S_Then))} 
      *                  else if !defined(first(S_Then)) then 
      *                    {(node, next(node))}
      * 
