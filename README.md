@@ -42,16 +42,42 @@ Create a pull request when the lab is done. Submit to Canvas the URL of the pull
 
 The tests for the `ControlFlowGraphBuilder` use the `StatementTracker` to create a list of each type of statement in a compilation unit. The statements in each type of list are ordered by visit order. The `StatementTracker` is a convenient and easy way to get the `ASTNode` instance for any statement for checking specific edges between statements in the particular method from which the `ControlFlowGraph` is constructed. An example of using the `StatementTracker` to get statements checking specific edges is shown in the tests for `Block`. Intuitively though, the `StatementTracker` makes it easy to get any particular statement in the method to check for the presence or absence of an edge.
 
-# Test Inputs in the resources directory
+# Updating Test Inputs in the Resources Directory
 
-Anytime a test input is changed, then a `mvn compile` is required to update the `target` directory with with the changed resource. Be aware of this requirement if ever the test input file is being modified, the running the test is not using the modified input.
+Anytime a test input is changed, then a may be `mvn compile` required to update the `target` directory with with the changed resource. Be aware of this quirk if ever the test input file has been modified but the running the test is not using the modified input.
 
-# Thoughts
+# Mocks Mocks and More Mocks
+
+Creating the mocks for the `ControlFlowGraph` instances is tricky: one because it can be tedious, and two because it requires also creating mocks for several different `ASTNode` types:
+
+  * `VariableDeclaration`
+  * `VariableDeclarationStatement`
+  * `Assignment`
+  * `ExpressionStatement`
+  * `SimpleName`
+  * `MethodDeclaration`
+  * `Block`
+
+The above list is not comprehensive as it depends somewhat on the shape of the graphs being mocked, but it is a good starting point.
+
+The goal is to only define required `when().thenReturn()` behavior for each mock. And it is more common than uncommon to be returning mocks for that behavior since an `ASTNode` is likely to use mocks in its own mock. Following is some brief discussion for the less obvious `ASTNodes` to help get started.
+
+The `ControlFlowGraph` itself needs to mock its entire interface. That includes the behavior for `ControlFlowGraph.getSuccs(Statement)` and `ControlFlowGraph.getPreds(Statement)` for each statement in the graph. Drawing the graph being mocked is helpful to be sure all the edges are present. Recall that `ControlFlowGraph.getEnd()` returns the `Block` in the method declaration (see `ControlFlowGraphBuilder#Visitor.visit(MethodDeclaration)`). Using the block in the method declaration for the end is convenient so that every return statement goes to the same place. Remember, it is not required to look in the block as the control flow graph defines edges between statements. It is necessary to look at each statement though to see if it generates a definition (e.g., `VariableDelarationStatemnt` and `ExpressionStatement` in the case of it wrapping an `Assignment`).
+
+## Variable Declaration Statement
+
+The `VariableDeclarationStatement` has a list of *fragments* where the actual definitions happen, `VariableDeclarationStatement.fragments()`. It returns a `List<VariableDeclaration>` instance. A fragment is a `VariableDeclaration`. It needs a `SimpleName` to return for `VariableDeclaration.getName()`.
+
+## Expression Statement
+
+An `ExpressionStatemnt` wraps an `Expression` that it returns with `ExpressionStatement.getExpression()`. The interesting expression in terms of a reaching definitions analysis is `Assignment`. The `Assignment` needs an expressions for the left-hand side with `Assignment.getLeftHandSide()`. That expression should be a `SimpleName` for this lab.
+
+# Other Things to Consider
 
   * Creating the mocks for the control flow graph is error prone. It is not unusual to find that the reaching definitions implementation is fine and rather the test failded because the mock was not correct.
   * `doesDefine` in `ReachingDefinitionsBuilderTests` is easily modified to check not just for a name but for the mock that is the expected statement for the definition.
   * Be sure when computing the union over predecessors that there is special care taken for the start node so that it includes the definitions for the parameters.
-  * Compute once and save the defintions in a `GenSet` map so that the same instances of `Definition` are used through all the analysis. Using the **same** instances everywhere means that two sets can be compared for equality without having to define any `equals` method for `Definition` types. (e.g. `set1.equals(set2)` works as expected).
+  * Compute once and save the defintions in a `GenSet` map so that the same instances of `Definition` are used through all the analysis. Using the **same instances** everywhere means that two sets of definitions can be compared for equality without having to define an `equals` method for `Definition` types (e.g. `set1.equals(set2)` works as expected).
   * `SimpleName.getIdentifier()` gives the name and is what needs to be mocked.
   * Write code to create mocks for things such as `VariableDeclaration`, `VariableDeclarationStatement`, `Assignment`, `ExpressionStatement`, etc.
   * The code for the reaching definitions analysis should be simple and may prove to be less code than the test code to build the mocks and define the tests.
