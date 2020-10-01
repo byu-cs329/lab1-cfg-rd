@@ -145,7 +145,6 @@ public class ControlFlowGraphBuilder {
 
       Statement elseStatement = node.getElseStatement();
       if (elseStatement != null) {
-        log.debug("Else-statement is null");
         block = (Block)(elseStatement);
         statementList = getStatementList(block.statements());
         insertStatementList(node, statementList, nextStatement);
