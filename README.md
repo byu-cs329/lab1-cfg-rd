@@ -42,7 +42,18 @@ Create a pull request when the lab is done. Submit to Canvas the URL of the pull
 
 The tests for the `ControlFlowGraphBuilder` use the `StatementTracker` to create a list of each type of statement in a compilation unit. The statements in each type of list are ordered by visit order. The `StatementTracker` is a convenient and easy way to get the `ASTNode` instance for any statement for checking specific edges between statements in the particular method from which the `ControlFlowGraph` is constructed. An example of using the `StatementTracker` to get statements checking specific edges is shown in the tests for `Block`. Intuitively though, the `StatementTracker` makes it easy to get any particular statement in the method to check for the presence or absence of an edge.
 
-# Updating Test Inputs in the Resources Directory
+## Understanding the specifications
+
+The specification is writtin te mimic the formal definition of the algorithm in [cfg-rd-lecture.md](https://bitbucket.org/byucs329/byu-cs-329-lecture-notes/src/master/cfg-rd-lecture.md). It relies on several helper definitions:
+
+  * `S` is a list of statements that belong to a `Block` such as the list of statements in the block for the method declaration
+  * `s` is a statement sometimes with an index in a list as a subscript
+  * `last(S)` is the last statement in the list and undefined for an empty list
+  * `first(S)` is the first statement in the list and undefined when the list is empty
+  * `defined(first(S))` and `defined(last(S))` true if the thing is defined and false otherwise
+  * `firstReturn(S)` is the index of the first return statement in the list and when there is no return the index of the last statement in the list
+ 
+ # Updating Test Inputs in the Resources Directory
 
 Anytime a test input is changed, then a may be `mvn compile` required to update the `target` directory with with the changed resource. Be aware of this quirk if ever the test input file has been modified but the running the test is not using the modified input.
 
